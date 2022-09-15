@@ -28,7 +28,6 @@ long front_distance;
 #define ENABLE 7
 #define DIRA 6
 #define DIRB 5
-int i;
 
 void setup() {
 
@@ -55,15 +54,19 @@ void loop() {
     // Collect & record distance measure
     back_distance = back_sensor.Distance();
     front_distance = front_sensor.Distance();
+    Serial.print("Back = ");
     Serial.print(back_distance);
+    Serial.print("cm");
+    Serial.print(", ");
+    Serial.print("Front = ");
+    Serial.print(front_distance);
     Serial.println("cm");
-//    Serial.print("front = " + front_distance);
-//    Serial.println("cm");
     delay(10);
 
     // Turn on motor if closer than 10cm
     if (back_distance < 10) {
       // Turn the motor on
+      Serial.println("Motor on");
       digitalWrite(ENABLE,255); // enable full speed
       digitalWrite(DIRA,HIGH); //one way
       digitalWrite(DIRB,LOW);
