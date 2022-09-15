@@ -29,6 +29,10 @@ long front_distance;
 #define DIRA 6
 #define DIRB 5
 
+// Controls
+int RUN_DISTANCE = 10;
+int BRAKE_DISTANCE = 20;
+
 void setup() {
 
   // ON/OFF Switch
@@ -54,6 +58,22 @@ void loop() {
     // Collect & record distance measure
     back_distance = back_sensor.Distance();
     front_distance = front_sensor.Distance();
+    printSensorValues();
+
+    // Turn the motor ON if:
+    // a threat is close to the backand no frontal obstacles are near.
+    if ((back_distance < RUN_DISTANCE) && (front_distance > BRAKE_DISTANCE)) {
+      motorON();
+    } else {
+      motorOFF();
+    }
+  }
+}
+
+
+// Helper Functions
+
+void printSensorValues() {
     Serial.print("Back = ");
     Serial.print(back_distance);
     Serial.print("cm");
@@ -62,18 +82,17 @@ void loop() {
     Serial.print(front_distance);
     Serial.println("cm");
     delay(10);
+}
 
-    // Turn on motor if closer than 10cm
-    if (back_distance < 10) {
-      // Turn the motor on
-      Serial.println("Motor on");
-      digitalWrite(ENABLE,255); // enable full speed
-      digitalWrite(DIRA,HIGH); //one way
-      digitalWrite(DIRB,LOW);
-    } else {
-      digitalWrite(ENABLE,LOW); // then stops
-    }
-  }
+void motorON() {
+    Serial.println("Motor on");
+    digitalWrite(ENABLE,255); // enable full speed
+    digitalWrite(DIRA,HIGH); //one way
+    digitalWrite(DIRB,LOW);
+}
+
+void motorOFF() {
+  digitalWrite(ENABLE,LOW);
 }
 
 void checkForButtonPress() {
