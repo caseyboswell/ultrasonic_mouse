@@ -28,6 +28,7 @@ long front_distance;
 #define ENABLE 7
 #define DIRA 6
 #define DIRB 5
+float senseResistance = 1.5;
 
 // Controls
 int RUN_DISTANCE = 10;
@@ -42,6 +43,7 @@ void setup() {
   pinMode(ENABLE,OUTPUT);
   pinMode(DIRA,OUTPUT);
   pinMode(DIRB,OUTPUT);
+  pinMode(A0, INPUT);
   
   // Serial Monitor
   Serial.begin(9600);
@@ -58,7 +60,23 @@ void loop() {
     // Collect & record distance measure
     back_distance = back_sensor.Distance();
     front_distance = front_sensor.Distance();
-    printSensorValues();
+//    printSensorValues();
+
+    // Check the motor current
+    // https://www.arduino.cc/en/Tutorial/BuiltInExamples/ReadAnalogVoltage
+    float sensorValueMax = 1023.0;
+    float motorVoltageSupply = 3.3;
+    int sensorValue = analogRead(A0);
+    float motorVoltage = sensorValue * (motorVoltageSupply / sensorValueMax); // Scaled between 0V and 3.3V
+    // V = IR -> I = V/R
+    float motorCurrent = motorVoltage / senseResistance;
+
+//    Serial.print("sensorValue = ");
+//    Serial.println(sensorValue);
+    Serial.print("motorVoltage = ");
+    Serial.println(motorVoltage);
+    Serial.print("motorCurrent = ");
+    Serial.println(motorCurrent);
 
     // Turn the motor ON if:
     // a threat is close to the backand no frontal obstacles are near.
@@ -85,7 +103,7 @@ void printSensorValues() {
 }
 
 void motorON() {
-    Serial.println("Motor on");
+//    Serial.println("Motor on");
     digitalWrite(ENABLE,255); // enable full speed
     digitalWrite(DIRA,HIGH); //one way
     digitalWrite(DIRB,LOW);
